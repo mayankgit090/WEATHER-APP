@@ -1,6 +1,3 @@
-
-
-
 import 'dart:convert';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -38,12 +35,15 @@ class _HomeScreenState extends State<HomeScreen> {
   Future<void> _getCurrentLocation() async {
     try {
       LocationPermission permission = await Geolocator.requestPermission();
-      if (permission == LocationPermission.denied || permission == LocationPermission.deniedForever) {
+      if (permission == LocationPermission.denied ||
+          permission == LocationPermission.deniedForever) {
         throw ('Location permissions are denied');
       }
-      Position position = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
+      Position position = await Geolocator.getCurrentPosition(
+          desiredAccuracy: LocationAccuracy.high);
 
-      placemarkFromCoordinates(position.latitude, position.longitude).then((placem) {
+      placemarkFromCoordinates(position.latitude, position.longitude)
+          .then((placem) {
         setState(() {
           locationname = placem[0].locality.toString();
         });
@@ -60,7 +60,8 @@ class _HomeScreenState extends State<HomeScreen> {
   Future<WeatherRealTime> loaddata(double lat, double lon) async {
     try {
       final response = await http.get(
-        Uri.parse('https://api.tomorrow.io/v4/weather/realtime?location=$lat,$lon&apikey=XSgu7bbgiVea5JPrFb9upYf8KB45Js5s'),
+        Uri.parse(
+            'https://api.tomorrow.io/v4/weather/realtime?location=$lat,$lon&apikey=ar25uMQlsnuQeIMGSc79fBsfcSXxMtZG'),
         headers: {'accept': 'application/json'},
       );
 
@@ -76,7 +77,8 @@ class _HomeScreenState extends State<HomeScreen> {
   Future<WeatherForecast> getforecast(double lat, double lon) async {
     try {
       final response = await http.get(
-        Uri.parse('https://api.tomorrow.io/v4/weather/forecast?location=$lat,$lon&timesteps=hourly&apikey=XSgu7bbgiVea5JPrFb9upYf8KB45Js5s'),
+        Uri.parse(
+            'https://api.tomorrow.io/v4/weather/forecast?location=$lat,$lon&timesteps=hourly&apikey=ar25uMQlsnuQeIMGSc79fBsfcSXxMtZG'),
         headers: {'accept': 'application/json'},
       );
 
@@ -91,7 +93,8 @@ class _HomeScreenState extends State<HomeScreen> {
   Future<WeatherRealTime> loaddataByCity(String city) async {
     try {
       final response = await http.get(
-        Uri.parse('https://api.tomorrow.io/v4/weather/realtime?location=$city&apikey=XSgu7bbgiVea5JPrFb9upYf8KB45Js5s'),
+        Uri.parse(
+            'https://api.tomorrow.io/v4/weather/realtime?location=$city&apikey=XSgu7bbgiVea5JPrFb9upYf8KB45Js5s'),
         headers: {'accept': 'application/json'},
       );
 
@@ -107,12 +110,12 @@ class _HomeScreenState extends State<HomeScreen> {
   Future<WeatherForecast> getforecastByCity(String city) async {
     try {
       final response = await http.get(
-        Uri.parse('https://api.tomorrow.io/v4/weather/forecast?location=$city&timesteps=hourly&apikey=XSgu7bbgiVea5JPrFb9upYf8KB45Js5s'),
+        Uri.parse(
+            'https://api.tomorrow.io/v4/weather/forecast?location=$city&timesteps=hourly&apikey=XSgu7bbgiVea5JPrFb9upYf8KB45Js5s'),
         headers: {'accept': 'application/json'},
       );
 
       final body = jsonDecode(response.body);
-      
 
       return WeatherForecast.fromJson(body);
     } catch (e) {
@@ -228,7 +231,8 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             body: FutureBuilder(
                 future: cityname == null
-                    ? loaddata(_currentPosition!.latitude, _currentPosition!.longitude)
+                    ? loaddata(
+                        _currentPosition!.latitude, _currentPosition!.longitude)
                     : loaddataByCity(cityname!),
                 builder: (context, snapshot) {
                   if (snapshot.hasError) {
@@ -255,7 +259,8 @@ class _HomeScreenState extends State<HomeScreen> {
                         ),
                         FutureBuilder(
                             future: cityname == null
-                                ? getforecast(_currentPosition!.latitude, _currentPosition!.longitude)
+                                ? getforecast(_currentPosition!.latitude,
+                                    _currentPosition!.longitude)
                                 : getforecastByCity(cityname!),
                             builder: (context, snapshot) {
                               if (snapshot.connectionState ==
@@ -264,7 +269,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                   child: CircularProgressIndicator(),
                                 );
                               } else if (snapshot.hasError) {
-                                return const Text('Invalid city name or error fetching forecast');
+                                return const Text(
+                                    'Invalid city name or error fetching forecast');
                               }
                               return Column(
                                 children: [
